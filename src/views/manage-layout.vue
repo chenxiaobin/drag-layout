@@ -1,6 +1,6 @@
 <template>
-  <div class="special-monitor">
-    <div class="special-monitor__custom">
+  <div class="manage-layout">
+    <div class="manage-layout__custom">
       <template v-if="!isCustomEdit">
         <span class="custom__peizhi" @click="isCustomEdit=true">自定义配置</span>
       </template>
@@ -10,11 +10,11 @@
         <span class="custom__cancel" @click="handleCancel">取消</span>
       </template>
     </div>
-    <div class="special-monitor__box" ref="RefBox">
+    <div class="manage-layout__box" ref="RefBox">
       <template v-if="layout">
         <drag-layout ref="RefGridBox"
                           :layout="layout"
-                          :tempLayout="tempLayout"
+                          :components="components"
                           :draggable="draggable"></drag-layout>
       </template>
     </div>
@@ -41,12 +41,17 @@
 </template>
 <script>
 import DragLayout from './drag-layout'
-import layoutConfig from '../mock/layout'
-import components from '../mock/components'
 import storage from '../mixins/storage'
 import Utils from '../utils/utils2'
 export default {
   mixins: [storage],
+  props: {
+    layoutConfig: {
+      type: Object,
+      required: true
+    },
+    components: Array
+  },
   data () {
     return {
       layout: null,
@@ -54,7 +59,6 @@ export default {
       isCustomEdit: false,
       isCustomShow: false,
       draggable: false,
-      components: components,
       tempComponents: null
     }
   },
@@ -73,8 +77,8 @@ export default {
     }
   },
   mounted () {
-    this.layout = JSON.parse(this.getStorageItem('LayoutConfig')) || layoutConfig
-    const ckeys = this.layout.layout.map((v) => { return v.relativeModule })
+    this.layout = JSON.parse(this.getStorageItem('LayoutConfig')) || this.layoutConfig
+    const ckeys = (this.layout.layout && this.layout.layout.map((v) => { return v.relativeModule })) || []
 
     this.components.map(v => {
       v.checked = !!(ckeys.indexOf(v.id) > -1)
@@ -118,58 +122,58 @@ export default {
 }
 </script>
 <style>
-.special-monitor {
+.manage-layout {
   width: 100%;
   height: 100%;
   position: relative;
 }
-.special-monitor__custom {
+.manage-layout__custom {
   width: 100%;
   height: 40px;
 }
-.special-monitor__custom span {
+.manage-layout__custom span {
   display: block;
   float: left;
   margin-right: 10px;
   border-radius: 15px;
-  border: 1px solid #00CBFF;
-  color: #00CBFF;
-  font-size: 18px;
+  border: 1px solid #000000;
+  color: #000000;
   padding: 2px 8px;
   cursor: pointer;
 }
-.special-monitor__custom span.custom__cancel{
+.manage-layout__custom span.custom__cancel{
   border: 1px solid #ff0000;
   color: #ff0000;
 }
-.special-monitor__custom span:hover{
-  color: #f4c539;
+.manage-layout__custom span:hover{
+  color: #0000ff;
+  border: 1px solid #0000ff;
 }
-.special-monitor__custom span::before{
+/* .manage-layout__custom span::before{
   content: '';
   width: 17px;
   height: 17px;
   display: block;
   margin-right: 2px;
-  margin-top: 5px;
+  margin-top: 2px;
   float: left;
 }
-.special-monitor__custom span.custom__peizhi::before {
+.manage-layout__custom span.custom__peizhi::before {
   background-image: url('/resource/images/setting.png');
 }
-.special-monitor__custom span.custom__save::before {
+.manage-layout__custom span.custom__save::before {
   background-image: url('/resource/images/icon-save.png');
   background-size: 100% 100%;
 }
-.special-monitor__custom span.custom__cancel::before {
+.manage-layout__custom span.custom__cancel::before {
   background-image: url('/resource/images/icon-cancel.png');
   background-size: 100% 100%;
 }
-.special-monitor__custom span.custom__manage::before {
+.manage-layout__custom span.custom__manage::before {
   background-image: url('/resource/images/icon-manage.png');
   background-size: 100% 100%;
-}
-.special-monitor__box{
+} */
+.manage-layout__box{
   width: 100%;
   height: calc(100% - 40px);
 }
@@ -212,9 +216,6 @@ export default {
   padding: 5px;
   height: 50px;
 }
-.modules-preview-bottom span {
-  font-size: 16px;
-}
 .business-btn {
   display: inline-block;
   font-weight: 400;
@@ -232,7 +233,6 @@ export default {
   -ms-user-select: none;
   user-select: none;
   padding: 6px 15px;
-  font-size: 12px;
   border-radius: 4px;
   -webkit-transition: color .2s linear,background-color .2s linear,border .2s linear,-webkit-box-shadow .2s linear;
   transition: color .2s linear,background-color .2s linear,border .2s linear,-webkit-box-shadow .2s linear;
@@ -251,4 +251,5 @@ export default {
   background-color: #2d8cf0;
   border-color: #2d8cf0;
 }
+
 </style>

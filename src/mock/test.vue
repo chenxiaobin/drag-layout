@@ -1,12 +1,17 @@
 <template>
   <div class="test">
-    <div class="name">测试组件</div>
+    <div class="name">测试组件{{uid}}</div>
   </div>
 </template>
 <script>
 export default {
   data () {
-    return {}
+    return {
+      uid: null
+    }
+  },
+  mounted () {
+    this.uid = this._uid
   }
 }
 </script>
@@ -14,7 +19,7 @@ export default {
 .test {
   width: 100%;
   height: 100%;
-  background: grey;
+  background: #40b9d1;
   color: #ffffff;
   font-size: 20px;
   text-align: center;

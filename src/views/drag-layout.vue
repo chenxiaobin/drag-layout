@@ -36,13 +36,16 @@
           </grid-item>
       </grid-layout>
     </div>
+
+    <template v-if="renderGridLayout && !renderGridLayout.length">
+      <div class="no-layout-data">无布局数据</div>
+    </template>
   </div>
 </template>
 <script>
 import load from '../core'
 import storage from '../mixins/storage'
 import { GridLayout, GridItem } from 'vue-grid-layout'
-import components from '../mock/components'
 export default {
   mixins: [storage],
   props: {
@@ -59,13 +62,13 @@ export default {
     draggable: {
       type: Boolean,
       default: false
-    }
+    },
+    components: Array
   },
   data () {
     return {
       gridWidth: null,
       gridHeight: null,
-      resizable: true,
       gridLayout: [],
       tempGridLayout: null,
       tempComponents: null
@@ -75,6 +78,9 @@ export default {
     GridLayout, GridItem
   },
   computed: {
+    resizable () {
+      return this.draggable
+    },
     renderGridLayout () {
       return this.tempGridLayout || this.gridLayout
     }
@@ -108,11 +114,12 @@ export default {
   },
   methods: {
     // 组件关联
-    getLayoutRef (layout) {
-      const layoutJson = layout || JSON.parse(this.getStorageItem('LayoutConfig')) || this.layout
-      layoutJson && layoutJson.layout.map((v) => {
+    getLayoutRef (clayout) {
+      const layoutJson = clayout || JSON.parse(this.getStorageItem('LayoutConfig')) || this.layout
+      const { layout = [] } = layoutJson
+      layout.map((v) => {
         // 处理关联组件1
-        v.moduleConfig = components.find((d) => {
+        v.moduleConfig = this.components.find((d) => {
           return d.id === v.relativeModule
         })
       })
@@ -120,7 +127,7 @@ export default {
     },
     // 重置布局y值让高度自适应
     resetLayoutY (ldata) {
-      const { height, layout } = ldata
+      const { height, layout = [] } = ldata
       const _newlayout = []
       layout.map(v => {
         const _o = Object.assign({}, v)
@@ -160,8 +167,8 @@ export default {
         return v.checked
       })
       // 遍历tempComponents， 对layout进行增删改
-      const height = nHeight || this.layout.height
-      const layout = nLayout || this.layout.layout
+      const height = nHeight || this.layout.height || this.gridHeight
+      const layout = nLayout || this.layout.layout || []
       const newLayout = []
       let count = 0
       temp.map((v) => {
@@ -224,5 +231,16 @@ export default {
 .e-layout-draggable{
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.no-layout-data{
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  position: absolute;
 }
 </style>

@@ -1,16 +1,23 @@
 <template>
   <div id="app">
-    <manage-layout></manage-layout>
+    <manage-layout :layoutConfig="{}" :components="components"></manage-layout>
   </div>
 </template>
 
 <script>
+import layoutConfig from './mock/layout'
+import components from './mock/components'
 import ManageLayout from './views/manage-layout.vue'
-
 export default {
   name: 'App',
   components: {
     ManageLayout
+  },
+  data () {
+    return {
+      layoutConfig: layoutConfig,
+      components: components
+    }
   }
 }
 </script>
@@ -28,5 +35,8 @@ body, html {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.vue-grid-item {
+  background: #40b9d1;
 }
 </style>
