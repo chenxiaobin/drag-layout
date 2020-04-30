@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <manage-layout :layoutConfig="{}" :components="components"></manage-layout>
+    <manage-layout :layoutConfig="layoutConfig" :components="components"></manage-layout>
   </div>
 </template>
 
